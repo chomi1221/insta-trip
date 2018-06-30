@@ -1,0 +1,23 @@
+{
+  "functions": {
+    
+  },
+  "hosting": {
+    "public": "build/default",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/redirect",
+        "function": "redirect"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
