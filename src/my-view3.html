@@ -10,6 +10,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../bower_components/iron-collapse/iron-collapse.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="my-view3">
@@ -22,18 +25,52 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
+  <firebase-auth id="auth" user="{{user}}" on-error="handleError">
+  </firebase-auth>
+
     <div class="card">
-      <paper-button on-click="onSignInButtonClick">SIGN IN WITH INSTAGRAM</paper-button>
+      <!-- <paper-button on-click="onSignInButtonClick">SIGN IN WITH INSTAGRAM</paper-button> -->
+      <iron-collapse opened$="[[user.isAnonymous]]">
+          <paper-input id="email"></paper-input>    
+          <paper-input id="password"></paper-input>   
+          <paper-button raised on-click="upgradeAnonymous">登録</paper-button>
+      </iron-collapse>
+      <iron-collapse opened$="[[!user.isAnonymous]]">
+        ログイン済み
+        <paper-button raised on-click="logout">ログアウト</paper-button>
+      </iron-collapse>
+
     </div>
   </template>
 
   <script>
     class MyView3 extends Polymer.Element {
       static get is() { return 'my-view3'; }
-    onSignInButtonClick() {
-      // Open the Auth flow in a popup.
-      window.open('/redirect', 'firebaseAuth', 'height=315,width=400');
-    }
+      static get properties() {
+        return {
+          user: Object
+        };
+      } 
+
+      // onSignInButtonClick() {
+      //   // Open the Auth flow in a popup.
+      //   window.open('/redirect', 'firebaseAuth', 'height=315,width=400');
+      // }
+      upgradeAnonymous(){
+        const email = this.$.email.value
+        const password = this.$.password.value
+        var credential = window.firebase.auth.EmailAuthProvider.credential(email, password);
+        window.firebase.auth().currentUser.linkAndRetrieveDataWithCredential(credential).then(function(usercred) {
+          var user = usercred.user;
+          console.log("Anonymous account successfully upgraded", user);
+        }, function(error) {
+          console.log("Error upgrading anonymous account", error);
+        });
+      }
+      logout(){
+        window.firebase.auth().signOut()
+      }
+
   
 
     }

@@ -12,6 +12,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="helper/question-helper.html">
 
 <dom-module id="my-view1">
   <template>
@@ -31,21 +32,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div class="card">
       <dl>
           <template is="dom-repeat" items="[[questions]]">
-              <dt>[[item.question]]</dt>
-              <dd><paper-button raised>[[item.answer1]]</paper-button></dd>
-              <dd><paper-button raised>[[item.answer2]]</paper-button></dd>
+            <question-helper question="[[item]]"></question-helper>
           </template>              
       </dl>
     </div>
   </template>
 
   <script>
-    (function() {
-      'use strict';
-      Polymer({
-        is: 'my-view1',
-      });
-    })();
+    // (function() {
+    //   'use strict';
+    //   Polymer({
+    //     is: 'my-view1',
+    //   });
+    // })();
 
     class MyView1 extends Polymer.Element {
       
