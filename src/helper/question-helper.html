@@ -22,29 +22,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding: 10px;
       }
     </style> -->
-    
+
     <firebase-auth id="auth" user="{{user}}" on-error="handleError">
     </firebase-auth>
 
-    <firebase-query
-    path="questions/[[question.$key]]/stats"
-    data="{{stats}}">
+    <firebase-query path="questions/[[question.$key]]/stats" data="{{stats}}">
     </firebase-query>
 
     <style>
-        
     </style>
 
     <dt>[[question.question]]</dt>
     <div>
-        <dd><paper-button raised on-click="choose1">[[question.answer1]]</paper-button></dd>
-        <dd><paper-button raised on-click="choose2">[[question.answer2]]</paper-button></dd>
+      <dd>
+        <paper-button raised on-click="choose1">[[question.answer1]]</paper-button>
+      </dd>
+      <dd>
+        <paper-button raised on-click="choose2">[[question.answer2]]</paper-button>
+      </dd>
     </div>
     <div style$="width:[[result.choice1Percent]]%; height:40px; background:blue; color:white">
-        選択肢1：[[result.choice1Total]] [[result.choice1Percent]]%
+      選択肢1：[[result.choice1Total]] [[result.choice1Percent]]%
     </div>
     <div style$="width:[[result.choice2Percent]]%; height:40px; background:blue; color:white">
-        選択肢2：[[result.choice2Total]] [[result.choice2Percent]]%
+      選択肢2：[[result.choice2Total]] [[result.choice2Percent]]%
     </div>
 
   </template>
@@ -58,7 +59,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     // })();
 
     class QuestionHelper extends Polymer.Element {
-      
+
       static get is() { return 'question-helper'; }
 
       static get properties() {
@@ -68,59 +69,59 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           stats: Object,
           result: Object
         };
-      } 
+      }
 
-    static get observers() {
+      static get observers() {
         return [
           'calculateTotal(stats.splices)', //arrayに変化が起きたら実行される
         ];
-    }
+      }
 
-      choose1(){
+      choose1() {
         this.vote(1)
       }
-      choose2(){
+      choose2() {
         this.vote(2)
       }
-      vote(choice){
+      vote(choice) {
         console.log(this.question)
         const that = this
         var promises = []
         var promise
-        if(!this.user){
-            promise = this.$.auth.signInAnonymously()
-            promises.push(promise) //配列に追加
+        if (!this.user) {
+          promise = this.$.auth.signInAnonymously()
+          promises.push(promise) //配列に追加
         }
         Promise.all(promises).then(() => {
-            window.firebase.database().ref(`questions/${that.question.$key}/stats/${that.user.uid}`).set(choice)
-            console.log(that.user)
+          window.firebase.database().ref(`questions/${that.question.$key}/stats/${that.user.uid}`).set(choice)
+          console.log(that.user)
         })
       }
-      calculateTotal(){
+      calculateTotal() {
         const result = {
-            choice1Total:0,
-            choice2Total:0,
-            choice1Percent:0,
-            choice2Percent:0
+          choice1Total: 0,
+          choice2Total: 0,
+          choice1Percent: 0,
+          choice2Percent: 0
         }
-        for(var i=0; i<this.stats.length; i++){
-            const stat = this.stats[i].$val
-            if(stat == 1){
-                result.choice1Total++
-            }else if(stat == 2){
-                result.choice2Total++
-            }
-            // console.log(stat)
+        for (var i = 0; i < this.stats.length; i++) {
+          const stat = this.stats[i].$val
+          if (stat == 1) {
+            result.choice1Total++
+          } else if (stat == 2) {
+            result.choice2Total++
+          }
+          // console.log(stat)
         }
-        
+
         // result.choice1Total = result.choice1Total/(result.choice1Total+result.choice2Total)*100
         // result.choice2Total = result.choice2Total/(result.choice1Total+result.choice2Total)*100
-        result.choice1Percent = Math.round(result.choice1Total/this.stats.length*100)
-        result.choice2Percent = Math.round(result.choice2Total/this.stats.length*100)
-        this.set("result",result) //"property",value
+        result.choice1Percent = Math.round(result.choice1Total / this.stats.length * 100)
+        result.choice2Percent = Math.round(result.choice2Total / this.stats.length * 100)
+        this.set("result", result) //"property",value
 
       }
-      
+
 
       // send(){
       //   //データベースのaaaaaにwhoooooooooをセット
